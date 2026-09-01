@@ -3,540 +3,668 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Peruana · Panel de Practicantes</title>
+<title>La Peruana · Panel de Inteligencia</title>
 <style>
-  :root {
-    --burg: #7D1B2A;
-    --burg2: #9e2236;
-    --cream: #FDF0E8;
-    --dark: #1A1A1A;
-    --gray: #555;
-    --mid: #888;
-    --green: #2e7d32;
-    --yellow: #f57f17;
-    --red: #c62828;
-    --radius: 14px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.10);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
-
-  .header { background: var(--burg); color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-  .header-logo { width: 36px; height: 36px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--burg); font-size: 14px; flex-shrink: 0; }
-  .header-title { font-size: 17px; font-weight: 700; }
-  .header-sub { font-size: 12px; opacity: .8; }
-  .header-badge { margin-left: auto; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 700; display: none; }
-
-  .screen { display: none; max-width: 480px; margin: 0 auto; padding: 20px 16px 80px; }
-  .screen.active { display: block; }
-
-  .card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px 20px; margin-bottom: 16px; }
-  .card-title { font-size: 15px; font-weight: 700; color: var(--burg); margin-bottom: 16px; }
-
-  #screen-login { padding-top: 50px; }
-  .login-logo { text-align: center; margin-bottom: 28px; }
-  .login-logo .big { font-size: 52px; font-weight: 900; color: var(--burg); line-height: 1; }
-  .login-logo .sub { font-size: 13px; color: var(--mid); margin-top: 6px; }
-
-  label { display: block; font-size: 13px; font-weight: 600; color: var(--gray); margin-bottom: 6px; margin-top: 16px; }
-  label:first-child { margin-top: 0; }
-  input[type=text], input[type=number], input[type=date], textarea {
-    width: 100%; border: 1.5px solid #e0d5cc; border-radius: 8px; padding: 10px 12px;
-    font-size: 14px; color: var(--dark); background: #faf8f6; transition: border .2s; font-family: inherit;
-  }
-  input:focus, textarea:focus { outline: none; border-color: var(--burg); background: white; }
-  textarea { resize: vertical; min-height: 70px; }
-
-  .toggle-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-  .toggle-btn { padding: 8px 14px; border: 1.5px solid #d5c8be; border-radius: 20px; font-size: 13px; cursor: pointer; background: white; transition: all .18s; color: var(--gray); user-select: none; }
-  .toggle-btn.active { background: var(--burg); border-color: var(--burg); color: white; font-weight: 600; }
-
-  .semaforo { display: flex; gap: 6px; margin-top: 6px; }
-  .sem-btn { flex: 1; padding: 9px 6px; border-radius: 8px; border: 2px solid transparent; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; transition: all .18s; }
-  .sem-btn.r { border-color: var(--red); color: var(--red); }
-  .sem-btn.y { border-color: var(--yellow); color: var(--yellow); }
-  .sem-btn.g { border-color: var(--green); color: var(--green); }
-  .sem-btn.r.active { background: var(--red); color: white; }
-  .sem-btn.y.active { background: var(--yellow); color: white; }
-  .sem-btn.g.active { background: var(--green); color: white; }
-
-  .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .18s; font-family: inherit; margin-top: 20px; }
-  .btn-primary { background: var(--burg); color: white; }
-  .btn-primary:hover { background: var(--burg2); }
-  .btn-secondary { background: white; color: var(--burg); border: 2px solid var(--burg); }
-
-  .tab-bar { display: flex; background: white; border-radius: 10px; padding: 4px; margin-bottom: 16px; gap: 4px; box-shadow: var(--shadow); }
-  .tab { flex: 1; padding: 9px 4px; text-align: center; font-size: 12px; font-weight: 600; border-radius: 7px; cursor: pointer; color: var(--mid); transition: all .18s; }
-  .tab.active { background: var(--burg); color: white; }
-
-  .badge { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 700; }
-  .badge-ok { background: #e8f5e9; color: var(--green); }
-  .badge-warn { background: #fff8e1; color: var(--yellow); }
-  .badge-bad { background: #ffebee; color: var(--red); }
-  .badge-gray { background: #f0f0f0; color: var(--mid); }
-
-  .practitioner-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0e8e0; gap: 10px; }
-  .practitioner-row:last-child { border-bottom: none; }
-  .prac-code { width: 42px; height: 42px; border-radius: 50%; background: var(--burg); color: white; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .prac-info { flex: 1; }
-  .prac-name { font-weight: 600; font-size: 14px; }
-  .prac-last { font-size: 11px; color: var(--mid); margin-top: 2px; }
-
-  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .metric-box { background: var(--cream); border-radius: 10px; padding: 12px 14px; }
-  .metric-label { font-size: 11px; color: var(--mid); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
-  .metric-value { font-size: 24px; font-weight: 800; color: var(--burg); margin-top: 2px; }
-
-  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #222; color: white; padding: 12px 22px; border-radius: 30px; font-size: 14px; z-index: 999; opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap; }
-  #toast.show { opacity: 1; }
-
-  .detail-report { border: 1px solid #f0e8e0; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
-  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-top: 8px; }
-  .detail-item { font-size: 12px; color: var(--gray); }
-  .detail-item b { color: var(--dark); }
-
-  .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 6px; }
-  .divider span { font-size: 11px; font-weight: 700; color: var(--mid); text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e8ddd5; }
-
-  .success-icon { text-align: center; font-size: 64px; margin: 20px 0 10px; }
-  .success-title { text-align: center; font-size: 20px; font-weight: 800; color: var(--burg); }
-  .success-sub { text-align: center; font-size: 14px; color: var(--mid); margin-top: 6px; }
-
-  .empty-state { text-align: center; padding: 30px; color: var(--mid); font-size: 14px; }
-  .loader { text-align: center; padding: 24px; color: var(--mid); }
-  .spinner { width: 26px; height: 26px; border: 3px solid #f0e8e0; border-top-color: var(--burg); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 8px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+:root{--burg:#7D1B2A;--burg2:#9e2236;--cream:#FDF0E8;--dark:#1A1A1A;--gray:#555;--mid:#888;--g:#2e7d32;--y:#f57f17;--r:#c62828;--rad:14px;--sh:0 4px 24px rgba(0,0,0,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--cream);color:var(--dark);min-height:100vh}
+.hd{background:var(--burg);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hd-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--burg);font-size:13px;flex-shrink:0}
+.hd-t{font-size:16px;font-weight:700}.hd-s{font-size:11px;opacity:.8}
+.hd-badge{margin-left:auto;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;display:none}
+.screen{display:none;max-width:520px;margin:0 auto;padding:18px 14px 80px}
+.screen.active{display:block}
+.card{background:#fff;border-radius:var(--rad);box-shadow:var(--sh);padding:20px 18px;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:700;color:var(--burg);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.section-label{font-size:11px;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 10px;padding-bottom:5px;border-bottom:2px solid #f0e8e0}
+label{display:block;font-size:12px;font-weight:600;color:var(--gray);margin:12px 0 4px}
+label:first-child{margin-top:0}
+input[type=text],input[type=number],input[type=date],textarea,select{width:100%;border:1.5px solid #e0d5cc;border-radius:8px;padding:9px 11px;font-size:13px;color:var(--dark);background:#faf8f6;transition:border .2s;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--burg);background:#fff}
+textarea{resize:vertical;min-height:60px}
+select{cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.tog-g{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.tog{padding:7px 12px;border:1.5px solid #d5c8be;border-radius:20px;font-size:12px;cursor:pointer;background:#fff;transition:all .15s;color:var(--gray);user-select:none}
+.tog.on{background:var(--burg);border-color:var(--burg);color:#fff;font-weight:600}
+.sem{display:flex;gap:6px;margin-top:4px}
+.sem-b{flex:1;padding:8px 4px;border-radius:8px;border:2px solid transparent;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .15s}
+.sem-b.r{border-color:var(--r);color:var(--r)}.sem-b.y{border-color:var(--y);color:var(--y)}.sem-b.g{border-color:var(--g);color:var(--g)}
+.sem-b.r.on{background:var(--r);color:#fff}.sem-b.y.on{background:var(--y);color:#fff}.sem-b.g.on{background:var(--g);color:#fff}
+.btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;transition:all .18s;font-family:inherit;margin-top:18px}
+.btn-p{background:var(--burg);color:#fff}.btn-p:hover{background:var(--burg2)}
+.btn-s{background:#fff;color:var(--burg);border:2px solid var(--burg)}
+.tab-bar{display:flex;background:#fff;border-radius:10px;padding:4px;margin-bottom:14px;gap:3px;box-shadow:var(--sh)}
+.tab{flex:1;padding:8px 3px;text-align:center;font-size:11px;font-weight:600;border-radius:7px;cursor:pointer;color:var(--mid);transition:all .15s}
+.tab.on{background:var(--burg);color:#fff}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.b-ok{background:#e8f5e9;color:var(--g)}.b-warn{background:#fff8e1;color:var(--y)}.b-bad{background:#ffebee;color:var(--r)}.b-gray{background:#f0f0f0;color:var(--mid)}
+.prac-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0e8e0;gap:9px}
+.prac-row:last-child{border-bottom:none}
+.prac-code{width:40px;height:40px;border-radius:50%;background:var(--burg);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prac-info{flex:1}.prac-name{font-weight:600;font-size:13px}.prac-last{font-size:11px;color:var(--mid);margin-top:1px}
+.m-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.m-box{background:var(--cream);border-radius:10px;padding:11px 13px}
+.m-lbl{font-size:10px;color:var(--mid);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.m-val{font-size:22px;font-weight:800;color:var(--burg);margin-top:1px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+.rep-card{border:1px solid #f0e8e0;border-radius:10px;padding:11px 13px;margin-bottom:8px}
+.rep-head{display:flex;justify-content:space-between;align-items:center}
+.rep-tipo{font-weight:700;font-size:12px;color:var(--burg)}
+.rep-date{font-size:10px;color:var(--mid)}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;margin-top:7px}
+.rep-item{font-size:11px;color:var(--gray)}
+.rep-item b{color:var(--dark)}
+.rep-anl{font-size:11px;color:var(--mid);margin-top:6px;font-style:italic;border-top:1px solid #f5ece4;padding-top:6px}
+.hint{font-size:11px;color:var(--mid);margin-top:3px;line-height:1.4}
+.meta-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.meta-val{flex:1}
+.meta-vs{font-size:11px;color:var(--mid);white-space:nowrap}
+.pillar-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:var(--cream);color:var(--burg)}
+.suc-icon{text-align:center;font-size:60px;margin:16px 0 8px}
+.suc-t{text-align:center;font-size:19px;font-weight:800;color:var(--burg)}
+.suc-s{text-align:center;font-size:13px;color:var(--mid);margin-top:5px}
+.empty{text-align:center;padding:28px;color:var(--mid);font-size:13px}
+.spin{width:24px;height:24px;border:3px solid #f0e8e0;border-top-color:var(--burg);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ldr{text-align:center;padding:22px;color:var(--mid)}
+#screen-login{padding-top:50px}
+.login-big{text-align:center;margin-bottom:24px}
+.login-big .b{font-size:48px;font-weight:900;color:var(--burg);line-height:1}
+.login-big .s{font-size:12px;color:var(--mid);margin-top:4px}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-logo">LP</div>
-  <div>
-    <div class="header-title">La Peruana</div>
-    <div class="header-sub">Panel de Practicantes</div>
-  </div>
-  <div class="header-badge" id="header-badge"></div>
+<div class="hd">
+  <div class="hd-logo">LP</div>
+  <div><div class="hd-t">La Peruana</div><div class="hd-s">Panel de Inteligencia</div></div>
+  <div class="hd-badge" id="hd-badge"></div>
 </div>
-
 <div id="toast"></div>
 
-<!-- LOGIN -->
+<!-- ═══ LOGIN ═══ -->
 <div class="screen active" id="screen-login">
-  <div class="login-logo">
-    <div class="big">LP</div>
-    <div class="sub">Sanguchería Criolla · Piura, Perú</div>
+  <div class="login-big">
+    <div class="b">LP</div>
+    <div class="s">Sanguchería Criolla · Piura, Perú</div>
   </div>
   <div class="card">
-    <div class="card-title">🔑 Ingresa tu código de practicante</div>
-    <label>Código (ej: P01, P03)</label>
+    <div class="card-title">🔑 Ingresa tu código</div>
+    <label>Código de practicante</label>
     <input type="text" id="login-code" placeholder="P01" maxlength="12" autocomplete="off"
       style="text-transform:uppercase;font-weight:700;font-size:20px;letter-spacing:3px;text-align:center">
-    <p style="text-align:center;font-size:12px;color:var(--mid);margin-top:10px">Si no recuerdas tu código, pregúntale al encargado.</p>
-    <button class="btn btn-primary" onclick="doLogin()">Ingresar →</button>
+    <p style="text-align:center;font-size:11px;color:var(--mid);margin-top:8px">Código asignado por tu encargado</p>
+    <button class="btn btn-p" onclick="doLogin()">Ingresar →</button>
   </div>
 </div>
 
-<!-- PRACTICANTE -->
+<!-- ═══ PRACTICANTE ═══ -->
 <div class="screen" id="screen-prac">
   <div class="tab-bar">
-    <div class="tab active" onclick="showTab('tab-diario')">📋 Diario</div>
-    <div class="tab" onclick="showTab('tab-semanal')">📊 Semanal</div>
-    <div class="tab" onclick="showTab('tab-historial')">📁 Historial</div>
+    <div class="tab on" onclick="showTab('t-diario')">📋 Diario</div>
+    <div class="tab" onclick="showTab('t-semanal')">📊 Semanal</div>
+    <div class="tab" onclick="showTab('t-historial')">📁 Historial</div>
   </div>
 
   <!-- DIARIO -->
-  <div id="tab-diario">
+  <div id="t-diario">
     <div class="card">
-      <div class="card-title">📋 Reporte Diario</div>
+      <div class="card-title">📋 Reporte Diario — Inteligencia</div>
 
-      <label>Fecha de hoy</label>
+      <label>Fecha</label>
       <input type="date" id="d-fecha">
 
-      <div class="divider"><span>Checklist del día</span></div>
+      <div class="section-label">📸 Contenido publicado hoy</div>
 
       <label>¿Publicaste la story del plato del día?</label>
-      <div class="toggle-group">
-        <div class="toggle-btn active" data-field="d-stories" data-val="Sí" onclick="toggleSelect(this)">✅ Sí</div>
-        <div class="toggle-btn" data-field="d-stories" data-val="No" onclick="toggleSelect(this)">❌ No</div>
-        <div class="toggle-btn" data-field="d-stories" data-val="Programada" onclick="toggleSelect(this)">⏰ Programada</div>
+      <div class="tog-g">
+        <div class="tog on" data-f="d-story-pub" data-v="Sí" onclick="tog(this)">✅ Sí</div>
+        <div class="tog" data-f="d-story-pub" data-v="No" onclick="tog(this)">❌ No</div>
+        <div class="tog" data-f="d-story-pub" data-v="Programada" onclick="tog(this)">⏰ Prog.</div>
       </div>
 
-      <label>¿Respondiste los comentarios de IG y FB?</label>
-      <div class="toggle-group">
-        <div class="toggle-btn active" data-field="d-comentarios" data-val="Todos" onclick="toggleSelect(this)">✅ Todos</div>
-        <div class="toggle-btn" data-field="d-comentarios" data-val="Parcial" onclick="toggleSelect(this)">⚡ Parcial</div>
-        <div class="toggle-btn" data-field="d-comentarios" data-val="No" onclick="toggleSelect(this)">❌ No</div>
+      <div class="row2">
+        <div>
+          <label>Hora de publicación</label>
+          <input type="text" id="d-story-hora" placeholder="ej: 8:15 AM">
+        </div>
+        <div>
+          <label>Pilar de contenido</label>
+          <select id="d-story-pilar">
+            <option value="">Seleccionar</option>
+            <option>Pilar 1 — Cocina en vivo</option>
+            <option>Pilar 2 — Menú del día</option>
+            <option>Pilar 3 — Cliente protagonista</option>
+            <option>Pilar 4 — Identidad piurana</option>
+          </select>
+        </div>
       </div>
 
-      <label>¿Respondiste mensajes de WhatsApp Business?</label>
-      <div class="toggle-group">
-        <div class="toggle-btn active" data-field="d-wamensajes" data-val="Todos" onclick="toggleSelect(this)">✅ Todos</div>
-        <div class="toggle-btn" data-field="d-wamensajes" data-val="Parcial" onclick="toggleSelect(this)">⚡ Parcial</div>
-        <div class="toggle-btn" data-field="d-wamensajes" data-val="No" onclick="toggleSelect(this)">❌ No</div>
+      <label>Alcance / visualizaciones de la story (número)</label>
+      <div class="meta-row">
+        <div class="meta-val"><input type="number" id="d-story-alcance" placeholder="ej: 120" min="0"></div>
+        <div class="meta-vs">Meta: >80/story</div>
       </div>
 
-      <label>¿Grabaste contenido hoy (foto / video)?</label>
-      <div class="toggle-group">
-        <div class="toggle-btn active" data-field="d-material" data-val="Sí" onclick="toggleSelect(this)">✅ Sí</div>
-        <div class="toggle-btn" data-field="d-material" data-val="No" onclick="toggleSelect(this)">❌ No</div>
-      </div>
+      <label>Descripción del contenido publicado</label>
+      <textarea id="d-story-desc" placeholder="ej: Story del chicharrón con precio S/12 y link al WhatsApp. Se grabó en el local a las 8am."></textarea>
+
+      <label>Tu análisis: ¿funcionó bien? ¿por qué sí o por qué no?</label>
+      <textarea id="d-story-anl" placeholder="ej: Tuvo buen alcance porque se publicó en hora pico (8am). El precio visible generó 3 consultas directas."></textarea>
 
       <label>¿Publicaste la story de urgencia de la tarde?</label>
-      <div class="toggle-group">
-        <div class="toggle-btn active" data-field="d-urgencia" data-val="Sí" onclick="toggleSelect(this)">✅ Sí</div>
-        <div class="toggle-btn" data-field="d-urgencia" data-val="No" onclick="toggleSelect(this)">❌ No</div>
+      <div class="tog-g">
+        <div class="tog on" data-f="d-urg-pub" data-v="Sí" onclick="tog(this)">✅ Sí</div>
+        <div class="tog" data-f="d-urg-pub" data-v="No" onclick="tog(this)">❌ No</div>
+      </div>
+      <label>Pedidos generados tras la story de urgencia</label>
+      <input type="number" id="d-urg-pedidos" placeholder="0" min="0">
+
+      <div class="section-label">💬 Gestión de comunidad</div>
+
+      <div class="row2">
+        <div>
+          <label>Comentarios recibidos (IG+FB)</label>
+          <input type="number" id="d-com-rec" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Comentarios respondidos</label>
+          <input type="number" id="d-com-resp" placeholder="0" min="0">
+        </div>
+      </div>
+      <label>Comentario o consulta más relevante del día</label>
+      <textarea id="d-com-nota" placeholder="ej: Un cliente preguntó si hay delivery a Los Algarrobos. Respondí que sí con el link del menú."></textarea>
+
+      <div class="row2">
+        <div>
+          <label>Mensajes WA recibidos</label>
+          <input type="number" id="d-wa-rec" placeholder="0" min="0">
+        </div>
+        <div>
+          <label>Pedidos confirmados WA</label>
+          <input type="number" id="d-wa-ped" placeholder="0" min="0">
+        </div>
+      </div>
+      <label>¿Qué pedía o preguntaba más la gente hoy?</label>
+      <textarea id="d-wa-freq" placeholder="ej: Mayoría preguntó por almuerzos y precio del combo. 2 personas pidieron horario."></textarea>
+
+      <div class="section-label">🎥 Captación de material</div>
+
+      <label>¿Grabaste contenido hoy?</label>
+      <div class="tog-g">
+        <div class="tog on" data-f="d-mat-pub" data-v="Sí" onclick="tog(this)">✅ Sí</div>
+        <div class="tog" data-f="d-mat-pub" data-v="No" onclick="tog(this)">❌ No</div>
+      </div>
+      <div class="row2">
+        <div>
+          <label>Tipo de material</label>
+          <select id="d-mat-tipo">
+            <option value="">Seleccionar</option>
+            <option>Video — Reel</option>
+            <option>Video — Story</option>
+            <option>Foto — producto</option>
+            <option>Foto — proceso</option>
+            <option>Foto — cliente</option>
+          </select>
+        </div>
+        <div>
+          <label>Pilar al que pertenece</label>
+          <select id="d-mat-pilar">
+            <option value="">Seleccionar</option>
+            <option>Pilar 1 — Cocina en vivo</option>
+            <option>Pilar 2 — Menú del día</option>
+            <option>Pilar 3 — Cliente protagonista</option>
+            <option>Pilar 4 — Identidad piurana</option>
+          </select>
+        </div>
+      </div>
+      <label>Descripción del material capturado</label>
+      <textarea id="d-mat-desc" placeholder="ej: Video de 20s del cocinero preparando el chicharrón. Se ve el fuego y la textura. Listo para Reel."></textarea>
+      <label>Auto-evaluación de calidad del material (1=malo, 5=excelente)</label>
+      <div class="tog-g">
+        <div class="tog" data-f="d-mat-cal" data-v="1" onclick="tog(this)">1</div>
+        <div class="tog" data-f="d-mat-cal" data-v="2" onclick="tog(this)">2</div>
+        <div class="tog" data-f="d-mat-cal" data-v="3" onclick="tog(this)">3</div>
+        <div class="tog on" data-f="d-mat-cal" data-v="4" onclick="tog(this)">4</div>
+        <div class="tog" data-f="d-mat-cal" data-v="5" onclick="tog(this)">5</div>
       </div>
 
-      <label>Pedidos recibidos hoy por WhatsApp</label>
-      <input type="number" id="d-pedidos" placeholder="0" min="0">
+      <div class="section-label">🔍 Inteligencia competitiva del día</div>
+      <p class="hint">Observa qué publicaron hoy los competidores locales en Piura (otras sangucherías, pollerías, dark kitchens).</p>
 
-      <label>Observación del día (opcional)</label>
-      <textarea id="d-notas" placeholder="¿Algo importante? ¿Problemas? ¿Algo que funcionó bien?"></textarea>
+      <label>¿Observaste algo relevante de la competencia hoy?</label>
+      <div class="tog-g">
+        <div class="tog on" data-f="d-comp-obs" data-v="Sí" onclick="tog(this)">✅ Sí</div>
+        <div class="tog" data-f="d-comp-obs" data-v="No" onclick="tog(this)">No hoy</div>
+      </div>
+      <label>¿Qué competidor? ¿Qué publicó? ¿Qué plataforma?</label>
+      <textarea id="d-comp-que" placeholder="ej: Sanguchería X publicó un Reel de combo 2x1 en Instagram. Tuvo ~200 likes en 2 horas."></textarea>
+      <label>Tu análisis: ¿es una amenaza? ¿qué debería hacer La Peruana al respecto?</label>
+      <textarea id="d-comp-anl" placeholder="ej: Su 2x1 puede atraer al segmento joven. Deberíamos publicar hoy nuestra oferta de almuerzos con énfasis en calidad vs precio."></textarea>
 
-      <button class="btn btn-primary" onclick="submitDiario()">Enviar reporte diario ✓</button>
+      <div class="section-label">💡 Tu análisis del día</div>
+
+      <label>¿Qué funcionó mejor hoy y por qué?</label>
+      <textarea id="d-win" placeholder="ej: La story de urgencia de las 5pm generó 4 pedidos en 30 minutos. El mensaje de 'solo quedan 3 porciones' creó urgencia real."></textarea>
+      <label>¿Qué no funcionó y cuál es la causa?</label>
+      <textarea id="d-fail" placeholder="ej: El post del mediodía tuvo muy poco alcance. Creo que lo publiqué muy tarde (1pm) fuera del pico de tráfico."></textarea>
+      <label>Tu recomendación principal para mañana</label>
+      <textarea id="d-rec" placeholder="ej: Publicar la story del plato antes de las 8am y usar texto con precio visible desde el primer frame."></textarea>
+
+      <button class="btn btn-p" onclick="submitDiario()">Enviar reporte diario ✓</button>
     </div>
   </div>
 
   <!-- SEMANAL -->
-  <div id="tab-semanal" style="display:none">
+  <div id="t-semanal" style="display:none">
     <div class="card">
-      <div class="card-title">📊 Reporte Semanal (cada lunes)</div>
-
-      <label>Semana del (fecha del lunes)</label>
+      <div class="card-title">📊 Reporte Semanal — Análisis completo</div>
+      <label>Semana del (lunes)</label>
       <input type="date" id="s-fecha">
 
-      <div class="divider"><span>Contenido publicado</span></div>
+      <div class="section-label">📱 Métricas de contenido</div>
 
-      <label>Posts / Reels publicados esta semana</label>
-      <input type="number" id="s-posts" placeholder="Meta: mínimo 5" min="0">
+      <div class="row2">
+        <div>
+          <label>Posts / Reels publicados</label>
+          <div class="meta-row"><div class="meta-val"><input type="number" id="s-posts" placeholder="0" min="0"></div><div class="meta-vs">Meta: 5</div></div>
+        </div>
+        <div>
+          <label>Stories publicadas</label>
+          <div class="meta-row"><div class="meta-val"><input type="number" id="s-stories" placeholder="0" min="0"></div><div class="meta-vs">Meta: 6</div></div>
+        </div>
+      </div>
 
-      <label>Stories publicadas esta semana</label>
-      <input type="number" id="s-stories-n" placeholder="Meta: mínimo 6" min="0">
+      <label>Mejor contenido de la semana — describe qué fue</label>
+      <textarea id="s-best-desc" placeholder="ej: Reel del chicharrón al corte publicado el martes. 15s, sin texto, solo el sonido y el corte."></textarea>
+      <div class="row2">
+        <div>
+          <label>Alcance del mejor contenido</label>
+          <input type="number" id="s-best-alc" placeholder="vistas/personas" min="0">
+        </div>
+        <div>
+          <label>Pilar del mejor contenido</label>
+          <select id="s-best-pilar">
+            <option value="">Seleccionar</option>
+            <option>Pilar 1 — Cocina en vivo</option>
+            <option>Pilar 2 — Menú del día</option>
+            <option>Pilar 3 — Cliente protagonista</option>
+            <option>Pilar 4 — Identidad piurana</option>
+          </select>
+        </div>
+      </div>
+      <label>¿Por qué crees que funcionó? ¿Lo replicarías? ¿Cómo?</label>
+      <textarea id="s-best-anl" placeholder="ej: Funcionó porque el sonido crujiente llama la atención en silencio. Lo replicaría el próximo martes con el sánguche de pavo."></textarea>
 
-      <div class="divider"><span>Métricas de negocio</span></div>
+      <div class="section-label">💰 Métricas de negocio</div>
 
-      <label>Pedidos recibidos por WhatsApp esta semana</label>
-      <input type="number" id="s-pedidos" placeholder="Meta: 20+" min="0">
+      <label>Pedidos por WhatsApp esta semana</label>
+      <div class="meta-row"><div class="meta-val"><input type="number" id="s-pedidos" placeholder="0" min="0"></div><div class="meta-vs">Meta: 20+</div></div>
+      <label>¿Por qué subió o bajó respecto a la semana anterior? ¿Qué lo causó?</label>
+      <textarea id="s-pedidos-anl" placeholder="ej: Subieron porque activamos la story de urgencia todos los días. La mayor demanda fue martes y jueves al mediodía."></textarea>
 
-      <label>Visitas al menú digital (ver en Netlify Analytics)</label>
-      <input type="number" id="s-visitas" placeholder="Meta: 400+" min="0">
+      <label>Visitas al menú digital</label>
+      <div class="meta-row"><div class="meta-val"><input type="number" id="s-visitas" placeholder="0" min="0"></div><div class="meta-vs">Meta: 400+</div></div>
+      <label>¿Desde dónde llega el tráfico? (anuncio, stories, posts orgánicos)</label>
+      <textarea id="s-visitas-anl" placeholder="ej: 70% viene del anuncio de Meta. El 30% restante de la bio de Instagram. Casi nada de Facebook orgánico."></textarea>
 
-      <label>Nuevos seguidores en Instagram esta semana</label>
-      <input type="number" id="s-seguidores" placeholder="Meta: +25" min="0">
+      <label>Nuevos seguidores en Instagram</label>
+      <div class="meta-row"><div class="meta-val"><input type="number" id="s-seg" placeholder="0" min="0"></div><div class="meta-vs">Meta: 25+</div></div>
+      <label>¿Qué impulsó el crecimiento (o por qué no creció)?</label>
+      <textarea id="s-seg-anl" placeholder="ej: El Reel del martes trajo 18 seguidores nuevos. Sin ese Reel probablemente hubiéramos quedado en 5."></textarea>
 
-      <div class="divider"><span>Meta Ads</span></div>
+      <div class="section-label">📣 Análisis de Meta Ads</div>
 
       <label>CTR del anuncio activo (%)</label>
-      <input type="text" id="s-ctr" placeholder="ej: 4.8">
+      <div class="meta-row"><div class="meta-val"><input type="text" id="s-ctr" placeholder="ej: 4.8"></div><div class="meta-vs">Benchmark: >4%</div></div>
+      <label>¿Por qué está en ese nivel? ¿El creativo está desgastado?</label>
+      <textarea id="s-ctr-anl" placeholder="ej: Bajó de 6% a 4.2%. Creo que el anuncio ya lleva 2 semanas y la audiencia lo ha visto varias veces. Recomendaría cambiar la imagen."></textarea>
 
-      <label>CPC del anuncio (S/)</label>
-      <input type="text" id="s-cpc" placeholder="ej: 0.07">
+      <label>CPC — Costo por clic (S/)</label>
+      <div class="meta-row"><div class="meta-val"><input type="text" id="s-cpc" placeholder="ej: 0.07"></div><div class="meta-vs">Benchmark: <S/0.10</div></div>
 
-      <label>Semáforo general de la semana</label>
-      <div class="semaforo">
-        <div class="sem-btn r" onclick="setSemaforo('rojo', this)">🔴 Mal</div>
-        <div class="sem-btn y active" onclick="setSemaforo('amarillo', this)">🟡 Regular</div>
-        <div class="sem-btn g" onclick="setSemaforo('verde', this)">🟢 Bien</div>
-      </div>
+      <label>Estado del anuncio esta semana</label>
+      <select id="s-ad-estado">
+        <option value="">Seleccionar</option>
+        <option>En aprendizaje (primeros 7 días)</option>
+        <option>Estable y funcionando bien</option>
+        <option>Rendimiento bajando</option>
+        <option>Pausado o con problemas</option>
+      </select>
 
       <label>¿Actualizaste el popup de almuerzos esta semana?</label>
-      <div class="toggle-group">
-        <div class="toggle-btn active" data-field="s-popup" data-val="Sí" onclick="toggleSelect(this)">✅ Sí</div>
-        <div class="toggle-btn" data-field="s-popup" data-val="No" onclick="toggleSelect(this)">❌ No</div>
+      <div class="tog-g">
+        <div class="tog on" data-f="s-popup" data-v="Sí" onclick="tog(this)">✅ Sí</div>
+        <div class="tog" data-f="s-popup" data-v="No" onclick="tog(this)">❌ No</div>
       </div>
 
-      <label>Mejor contenido de la semana</label>
-      <input type="text" id="s-mejor" placeholder="ej: Reel chicharrón al corte — 800 vistas">
+      <label>Tu recomendación para la pauta la próxima semana</label>
+      <select id="s-ad-rec">
+        <option value="">Seleccionar acción</option>
+        <option>Mantener tal como está</option>
+        <option>Escalar presupuesto (+30%)</option>
+        <option>Cambiar creativo (imagen/video)</option>
+        <option>Cambiar el copy del anuncio</option>
+        <option>Pausar y reformular</option>
+        <option>Activar campaña de remarketing</option>
+      </select>
+      <label>Justifica tu recomendación</label>
+      <textarea id="s-ad-just" placeholder="ej: El CTR se mantiene sobre 4% y el CPC está en S/0.07. Podemos subir el presupuesto de S/7 a S/10 sin riesgo."></textarea>
 
-      <label>Observaciones y aprendizajes de la semana</label>
-      <textarea id="s-notas" placeholder="¿Qué funcionó? ¿Qué cambiaríamos? ¿Qué probamos la próxima semana?"></textarea>
+      <div class="section-label">🔍 Inteligencia competitiva semanal</div>
 
-      <button class="btn btn-primary" onclick="submitSemanal()">Enviar reporte semanal ✓</button>
+      <label>¿Qué hizo la competencia esta semana? (plataforma + contenido + resultado observado)</label>
+      <textarea id="s-comp-que" placeholder="ej: Sanguchería Criolla X publicó 4 Reels esta semana. Su mejor post tuvo ~500 likes. Promocionaron un combo familiar los viernes."></textarea>
+      <label>Oportunidad detectada: ¿qué espacio no está ocupando ningún competidor?</label>
+      <textarea id="s-comp-gap" placeholder="ej: Ninguno habla de identidad piurana. Todos se enfocan en precio. Ahí está nuestra diferenciación."></textarea>
+      <label>Tu recomendación: ¿cómo debería responder La Peruana?</label>
+      <textarea id="s-comp-anl" placeholder="ej: Publicar el próximo viernes un Reel de identidad piurana antes de que el fin de semana eleve el tráfico de la competencia."></textarea>
+
+      <div class="section-label">💡 Tu evaluación de la semana</div>
+
+      <label>Semáforo de la semana</label>
+      <div class="sem">
+        <div class="sem-b r" onclick="setSem('rojo',this)">🔴 Mal</div>
+        <div class="sem-b y on" onclick="setSem('amarillo',this)">🟡 Regular</div>
+        <div class="sem-b g" onclick="setSem('verde',this)">🟢 Bien</div>
+      </div>
+      <label>Justifica tu semáforo (¿por qué le das esa calificación?)</label>
+      <textarea id="s-sem-just" placeholder="ej: Le doy amarillo porque los pedidos de WA cumplieron la meta (22) pero las visitas al menú bajaron. El anuncio sigue funcionando pero el orgánico fue débil."></textarea>
+
+      <label>Principal logro de la semana</label>
+      <textarea id="s-win" placeholder="ej: El Reel del martes superó las 800 vistas orgánicas sin pauta. Es el mejor resultado desde que empezamos."></textarea>
+      <label>Principal problema de la semana + causa raíz</label>
+      <textarea id="s-fail" placeholder="ej: Solo publicamos 4 posts en vez de 5. La causa fue que el jueves no hubo material disponible porque el local cerró temprano."></textarea>
+
+      <label>Recomendación #1 para la próxima semana</label>
+      <textarea id="s-rec1" placeholder="ej: Grabar material los martes y miércoles para tener buffer si algo falla."></textarea>
+      <label>Recomendación #2</label>
+      <textarea id="s-rec2" placeholder="ej: Probar publicar el Reel a las 7pm (cuando la gente decide qué cenar) en vez de las 8am."></textarea>
+      <label>Recomendación #3</label>
+      <textarea id="s-rec3" placeholder="ej: Activar testimonios de clientes — llevan 2 semanas sin aparecer."></textarea>
+
+      <label>Tu prioridad #1 de acción inmediata</label>
+      <input type="text" id="s-prio" placeholder="ej: Cambiar el creativo del anuncio antes del lunes">
+
+      <button class="btn btn-p" onclick="submitSemanal()">Enviar reporte semanal ✓</button>
     </div>
   </div>
 
   <!-- HISTORIAL -->
-  <div id="tab-historial" style="display:none">
+  <div id="t-historial" style="display:none">
     <div class="card">
       <div class="card-title">📁 Mis reportes enviados</div>
-      <div id="historial-content"><div class="loader"><div class="spinner"></div>Cargando...</div></div>
+      <div id="hist-content"><div class="ldr"><div class="spin"></div>Cargando...</div></div>
     </div>
   </div>
 </div>
 
-<!-- ADMIN -->
+<!-- ═══ ADMIN ═══ -->
 <div class="screen" id="screen-admin">
   <div class="card">
     <div class="card-title">📈 Resumen de la semana</div>
-    <div class="metric-grid">
-      <div class="metric-box"><div class="metric-label">Reportes hoy</div><div class="metric-value" id="m-hoy">–</div></div>
-      <div class="metric-box"><div class="metric-label">Esta semana</div><div class="metric-value" id="m-semana">–</div></div>
-      <div class="metric-box"><div class="metric-label">Pedidos WA</div><div class="metric-value" id="m-pedidos">–</div></div>
-      <div class="metric-box"><div class="metric-label">Visitas menú</div><div class="metric-value" id="m-visitas">–</div></div>
+    <div class="m-grid">
+      <div class="m-box"><div class="m-lbl">Reportes hoy</div><div class="m-val" id="m-hoy">–</div></div>
+      <div class="m-box"><div class="m-lbl">Esta semana</div><div class="m-val" id="m-sem">–</div></div>
+      <div class="m-box"><div class="m-lbl">Pedidos WA</div><div class="m-val" id="m-ped">–</div></div>
+      <div class="m-box"><div class="m-lbl">Visitas menú</div><div class="m-val" id="m-vis">–</div></div>
     </div>
   </div>
-
   <div class="card">
     <div class="card-title">👥 Estado de practicantes</div>
-    <div id="admin-practicantes"><div class="loader"><div class="spinner"></div></div></div>
+    <div id="adm-prac"><div class="ldr"><div class="spin"></div></div></div>
   </div>
-
   <div class="card">
-    <div class="card-title">📋 Últimos reportes recibidos</div>
-    <div id="admin-reportes"><div class="loader"><div class="spinner"></div></div></div>
-    <button class="btn btn-secondary" style="margin-top:14px" onclick="loadAdmin()">🔄 Actualizar</button>
+    <div class="card-title">🧠 Últimos análisis recibidos</div>
+    <div id="adm-rep"><div class="ldr"><div class="spin"></div></div></div>
+    <button class="btn btn-s" style="margin-top:12px" onclick="loadAdmin()">🔄 Actualizar</button>
   </div>
 </div>
 
-<!-- SUCCESS -->
+<!-- ═══ SUCCESS ═══ -->
 <div class="screen" id="screen-success">
-  <div class="card" style="text-align:center;padding:40px 20px">
-    <div class="success-icon">✅</div>
-    <div class="success-title">¡Reporte enviado!</div>
-    <div class="success-sub" id="success-msg">Tu reporte fue registrado correctamente.</div>
-    <button class="btn btn-primary" style="margin-top:24px" onclick="goBack()">← Volver al panel</button>
+  <div class="card" style="text-align:center;padding:36px 18px">
+    <div class="suc-icon">✅</div>
+    <div class="suc-t">¡Reporte enviado!</div>
+    <div class="suc-s" id="suc-msg">Tu análisis fue registrado correctamente.</div>
+    <button class="btn btn-p" style="margin-top:22px" onclick="goBack()">← Volver al panel</button>
   </div>
 </div>
 
 <script>
-// ══════════ CONFIGURACIÓN ══════════
-const CONFIG = {
-  // Después de deployar el Google Apps Script, pega aquí la URL:
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/TU_SCRIPT_ID_AQUI/exec",
-
-  ADMIN_CODE: "NORTHE2026",
-
+// ═══ CONFIG ═══
+const CFG = {
+  APPS_URL: "https://script.google.com/macros/s/TU_SCRIPT_ID_AQUI/exec",
+  ADMIN: "NORTHE2026",
   PRACTICANTES: {
-    "P01": "Practicante 1",
-    "P02": "Practicante 2",
-    "P03": "Practicante 3",
-    "P04": "Practicante 4",
-    "P05": "Practicante 5",
-    "P06": "Practicante 6",
-    "P07": "Practicante 7",
-    "P08": "Practicante 8"
+    "P01":"Practicante 1","P02":"Practicante 2","P03":"Practicante 3",
+    "P04":"Practicante 4","P05":"Practicante 5","P06":"Practicante 6",
+    "P07":"Practicante 7","P08":"Practicante 8"
   }
 };
 
-let currentUser = null;
-let semaforo = "amarillo";
-let toggleValues = {};
+let usr=null, sem="amarillo", togV={};
 
-// ══════════ LOGIN ══════════
-function doLogin() {
-  const code = document.getElementById("login-code").value.trim().toUpperCase();
-  if (!code) { toast("Ingresa tu código"); return; }
-
-  if (code === CONFIG.ADMIN_CODE) {
-    currentUser = { code: "ADMIN", name: "Administrador", isAdmin: true };
-    document.getElementById("header-badge").style.display = "block";
-    document.getElementById("header-badge").textContent = "Admin";
-    showScreen("screen-admin");
-    loadAdmin();
-    return;
+// ═══ LOGIN ═══
+function doLogin(){
+  const c=document.getElementById("login-code").value.trim().toUpperCase();
+  if(!c){toast("Ingresa tu código");return}
+  if(c===CFG.ADMIN){
+    usr={code:"ADMIN",name:"Admin",isAdmin:true};
+    el("hd-badge").style.display="block"; el("hd-badge").textContent="Admin";
+    showS("screen-admin"); loadAdmin(); return;
   }
-
-  if (CONFIG.PRACTICANTES[code]) {
-    currentUser = { code, name: CONFIG.PRACTICANTES[code], isAdmin: false };
-    document.getElementById("header-badge").style.display = "block";
-    document.getElementById("header-badge").textContent = code;
-    setTodayDate();
-    showScreen("screen-prac");
-    return;
+  if(CFG.PRACTICANTES[c]){
+    usr={code:c,name:CFG.PRACTICANTES[c],isAdmin:false};
+    el("hd-badge").style.display="block"; el("hd-badge").textContent=c;
+    setDates(); showS("screen-prac"); return;
   }
-
-  toast("❌ Código incorrecto. Pregunta al encargado.");
+  toast("❌ Código incorrecto");
 }
+el("login-code").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
+el("login-code").addEventListener("input",e=>{e.target.value=e.target.value.toUpperCase()});
 
-document.getElementById("login-code").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
-document.getElementById("login-code").addEventListener("input", e => { e.target.value = e.target.value.toUpperCase(); });
-
-// ══════════ TABS ══════════
-function showTab(id) {
-  ["tab-diario","tab-semanal","tab-historial"].forEach(t => {
-    document.getElementById(t).style.display = t === id ? "block" : "none";
+// ═══ TABS ═══
+function showTab(id){
+  ["t-diario","t-semanal","t-historial"].forEach(t=>{
+    el(t).style.display=t===id?"block":"none";
   });
-  document.querySelectorAll(".tab").forEach((tab, i) => {
-    tab.classList.toggle("active", ["tab-diario","tab-semanal","tab-historial"][i] === id);
+  document.querySelectorAll(".tab").forEach((t,i)=>{
+    t.classList.toggle("on",["t-diario","t-semanal","t-historial"][i]===id);
   });
-  if (id === "tab-historial") loadHistorial();
+  if(id==="t-historial")loadHist();
 }
 
-// ══════════ TOGGLES ══════════
-function toggleSelect(el) {
-  const field = el.dataset.field;
-  document.querySelectorAll('[data-field="' + field + '"]').forEach(b => b.classList.remove("active"));
-  el.classList.add("active");
-  toggleValues[field] = el.dataset.val;
+// ═══ TOGGLES ═══
+function tog(e){
+  const f=e.dataset.f;
+  document.querySelectorAll('[data-f="'+f+'"]').forEach(b=>b.classList.remove("on"));
+  e.classList.add("on"); togV[f]=e.dataset.v;
 }
-function getToggle(field, def) { return toggleValues[field] || def || "Sí"; }
+function gT(f,def){return togV[f]||def||"—"}
 
-function setSemaforo(val, el) {
-  semaforo = val;
-  document.querySelectorAll(".sem-btn").forEach(b => b.classList.remove("active"));
-  el.classList.add("active");
-}
-
-function setTodayDate() {
-  const t = new Date().toISOString().split("T")[0];
-  document.getElementById("d-fecha").value = t;
-  document.getElementById("s-fecha").value = t;
+function setSem(v,e){
+  sem=v;
+  document.querySelectorAll(".sem-b").forEach(b=>b.classList.remove("on"));
+  e.classList.add("on");
 }
 
-// ══════════ SUBMIT DIARIO ══════════
-function submitDiario() {
-  const fecha = document.getElementById("d-fecha").value;
-  if (!fecha) { toast("Selecciona la fecha"); return; }
-  const data = {
-    tipo: "diario", codigo: currentUser.code, nombre: currentUser.name, fecha,
-    stories: getToggle("d-stories"),
-    comentarios: getToggle("d-comentarios"),
-    wamensajes: getToggle("d-wamensajes"),
-    material: getToggle("d-material"),
-    urgencia: getToggle("d-urgencia"),
-    pedidos: document.getElementById("d-pedidos").value || "0",
-    notas: document.getElementById("d-notas").value || ""
+function setDates(){
+  const t=new Date().toISOString().split("T")[0];
+  el("d-fecha").value=t; el("s-fecha").value=t;
+}
+
+// ═══ DIARIO ═══
+function submitDiario(){
+  const f=el("d-fecha").value; if(!f){toast("Selecciona la fecha");return}
+  const d={
+    tipo:"diario",codigo:usr.code,nombre:usr.name,fecha:f,
+    // Contenido
+    story_pub:gT("d-story-pub"),story_hora:v("d-story-hora"),
+    story_pilar:v("d-story-pilar"),story_alcance:v("d-story-alcance"),
+    story_desc:v("d-story-desc"),story_anl:v("d-story-anl"),
+    urg_pub:gT("d-urg-pub"),urg_pedidos:v("d-urg-pedidos"),
+    // Comunidad
+    com_rec:v("d-com-rec"),com_resp:v("d-com-resp"),
+    com_nota:v("d-com-nota"),wa_rec:v("d-wa-rec"),
+    wa_ped:v("d-wa-ped"),wa_freq:v("d-wa-freq"),
+    // Material
+    mat_pub:gT("d-mat-pub"),mat_tipo:v("d-mat-tipo"),
+    mat_pilar:v("d-mat-pilar"),mat_desc:v("d-mat-desc"),
+    mat_cal:gT("d-mat-cal","3"),
+    // Competencia
+    comp_obs:gT("d-comp-obs"),comp_que:v("d-comp-que"),
+    comp_anl:v("d-comp-anl"),
+    // Análisis
+    win:v("d-win"),fail:v("d-fail"),rec:v("d-rec")
   };
-  sendData(data, "Reporte diario registrado. ¡Buen trabajo! 💪");
+  send(d,"Reporte diario enviado. ¡Gran análisis! 🧠");
 }
 
-// ══════════ SUBMIT SEMANAL ══════════
-function submitSemanal() {
-  const fecha = document.getElementById("s-fecha").value;
-  if (!fecha) { toast("Selecciona la semana"); return; }
-  const data = {
-    tipo: "semanal", codigo: currentUser.code, nombre: currentUser.name, fecha,
-    posts: document.getElementById("s-posts").value || "0",
-    stories: document.getElementById("s-stories-n").value || "0",
-    pedidos: document.getElementById("s-pedidos").value || "0",
-    visitas: document.getElementById("s-visitas").value || "0",
-    seguidores: document.getElementById("s-seguidores").value || "0",
-    ctr: document.getElementById("s-ctr").value || "",
-    cpc: document.getElementById("s-cpc").value || "",
-    semaforo,
-    popup: getToggle("s-popup"),
-    mejor: document.getElementById("s-mejor").value || "",
-    notas: document.getElementById("s-notas").value || ""
+// ═══ SEMANAL ═══
+function submitSemanal(){
+  const f=el("s-fecha").value; if(!f){toast("Selecciona la semana");return}
+  const d={
+    tipo:"semanal",codigo:usr.code,nombre:usr.name,fecha:f,
+    // Contenido
+    posts:v("s-posts"),stories:v("s-stories"),
+    best_desc:v("s-best-desc"),best_alc:v("s-best-alc"),
+    best_pilar:v("s-best-pilar"),best_anl:v("s-best-anl"),
+    // Negocio
+    pedidos:v("s-pedidos"),pedidos_anl:v("s-pedidos-anl"),
+    visitas:v("s-visitas"),visitas_anl:v("s-visitas-anl"),
+    seguidores:v("s-seg"),seg_anl:v("s-seg-anl"),
+    // Ads
+    ctr:v("s-ctr"),ctr_anl:v("s-ctr-anl"),
+    cpc:v("s-cpc"),ad_estado:v("s-ad-estado"),
+    popup:gT("s-popup"),ad_rec:v("s-ad-rec"),ad_just:v("s-ad-just"),
+    // Competencia
+    comp_que:v("s-comp-que"),comp_gap:v("s-comp-gap"),comp_anl:v("s-comp-anl"),
+    // Evaluación
+    semaforo:sem,sem_just:v("s-sem-just"),
+    win:v("s-win"),fail:v("s-fail"),
+    rec1:v("s-rec1"),rec2:v("s-rec2"),rec3:v("s-rec3"),
+    prio:v("s-prio")
   };
-  sendData(data, "Reporte semanal enviado correctamente 📊");
+  send(d,"Reporte semanal enviado correctamente 📊");
 }
 
-// ══════════ SEND DATA ══════════
-function sendData(data, msg) {
-  // Guardar localmente como respaldo
-  const h = JSON.parse(localStorage.getItem("lp_reports") || "[]");
-  h.unshift({ ...data, timestamp: new Date().toISOString() });
-  if (h.length > 100) h.length = 100;
-  localStorage.setItem("lp_reports", JSON.stringify(h));
+// ═══ SEND ═══
+function send(data,msg){
+  const h=JSON.parse(localStorage.getItem("lp_rep")||"[]");
+  h.unshift({...data,ts:new Date().toISOString()});
+  if(h.length>100)h.length=100;
+  localStorage.setItem("lp_rep",JSON.stringify(h));
 
-  const isDemo = CONFIG.APPS_SCRIPT_URL.includes("TU_SCRIPT_ID");
-  if (isDemo) {
-    document.getElementById("success-msg").textContent = msg + " (modo demo — conecta Google Sheets para sincronizar)";
-    showScreen("screen-success");
-    return;
+  if(CFG.APPS_URL.includes("TU_SCRIPT_ID")){
+    el("suc-msg").textContent=msg+" (modo demo)";
+    showS("screen-success"); return;
   }
-
-  fetch(CONFIG.APPS_SCRIPT_URL, {
-    method: "POST", mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  }).then(() => {
-    document.getElementById("success-msg").textContent = msg;
-    showScreen("screen-success");
-  }).catch(() => {
-    document.getElementById("success-msg").textContent = msg + " (guardado localmente)";
-    showScreen("screen-success");
-  });
+  fetch(CFG.APPS_URL,{method:"POST",mode:"no-cors",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(data)
+  }).then(()=>{el("suc-msg").textContent=msg;showS("screen-success")})
+    .catch(()=>{el("suc-msg").textContent=msg+" (guardado local)";showS("screen-success")});
 }
 
-// ══════════ HISTORIAL ══════════
-function loadHistorial() {
-  const c = document.getElementById("historial-content");
-  const all = JSON.parse(localStorage.getItem("lp_reports") || "[]");
-  const mine = all.filter(r => r.codigo === currentUser.code);
-  if (!mine.length) { c.innerHTML = '<div class="empty-state">📭 Aún no tienes reportes enviados.</div>'; return; }
-  c.innerHTML = mine.slice(0,20).map(r => {
-    const d = new Date(r.timestamp);
-    const ds = d.toLocaleDateString("es-PE", {weekday:"short",day:"numeric",month:"short"}) + " " + d.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
-    const sem = r.semaforo ? ({verde:"🟢",amarillo:"🟡",rojo:"🔴"}[r.semaforo]||"") : "";
-    return '<div class="detail-report">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center">' +
-        '<span style="font-weight:700;font-size:13px;color:var(--burg)">' + (r.tipo==="semanal"?"📊 Semanal "+sem:"📋 Diario") + '</span>' +
-        '<span style="font-size:11px;color:var(--mid)">' + ds + '</span>' +
-      '</div>' +
-      '<div class="detail-grid" style="margin-top:8px">' +
-        (r.tipo==="semanal"
-          ? '<div class="detail-item">Posts: <b>'+r.posts+'</b></div><div class="detail-item">Pedidos WA: <b>'+r.pedidos+'</b></div><div class="detail-item">Visitas: <b>'+r.visitas+'</b></div><div class="detail-item">CTR: <b>'+(r.ctr||"–")+'%</b></div><div class="detail-item">CPC: <b>S/'+(r.cpc||"–")+'</b></div><div class="detail-item">Seguidores+: <b>'+r.seguidores+'</b></div>'
-          : '<div class="detail-item">Story día: <b>'+r.stories+'</b></div><div class="detail-item">Comentarios: <b>'+r.comentarios+'</b></div><div class="detail-item">WA msgs: <b>'+r.wamensajes+'</b></div><div class="detail-item">Material: <b>'+r.material+'</b></div><div class="detail-item">Pedidos: <b>'+r.pedidos+'</b></div><div class="detail-item">Urgencia: <b>'+r.urgencia+'</b></div>') +
-      '</div>' +
-      (r.notas ? '<div style="font-size:12px;color:var(--mid);margin-top:6px;font-style:italic">"'+r.notas+'"</div>' : '') +
-      '</div>';
+// ═══ HISTORIAL ═══
+function loadHist(){
+  const c=el("hist-content");
+  const all=JSON.parse(localStorage.getItem("lp_rep")||"[]");
+  const mine=all.filter(r=>r.codigo===usr.code);
+  if(!mine.length){c.innerHTML='<div class="empty">📭 Sin reportes aún.</div>';return}
+  c.innerHTML=mine.slice(0,15).map(r=>{
+    const d=new Date(r.ts);
+    const ds=d.toLocaleDateString("es-PE",{weekday:"short",day:"numeric",month:"short"})+" "+d.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
+    const semoji=r.semaforo?({verde:"🟢",amarillo:"🟡",rojo:"🔴"}[r.semaforo]||""):"";
+    const isS=r.tipo==="semanal";
+    let items="";
+    if(isS){
+      items=`<div class="rep-item">Posts: <b>${r.posts||"–"}</b></div><div class="rep-item">Pedidos WA: <b>${r.pedidos||"–"}</b></div><div class="rep-item">Visitas: <b>${r.visitas||"–"}</b></div><div class="rep-item">CTR: <b>${r.ctr||"–"}%</b></div><div class="rep-item">CPC: <b>S/${r.cpc||"–"}</b></div><div class="rep-item">Seguidores+: <b>${r.seguidores||"–"}</b></div>`;
+    } else {
+      items=`<div class="rep-item">Story mañana: <b>${r.story_pub||"–"}</b></div><div class="rep-item">Alcance story: <b>${r.story_alcance||"–"}</b></div><div class="rep-item">Pedidos WA: <b>${r.wa_ped||"–"}</b></div><div class="rep-item">Material: <b>${r.mat_pub||"–"} (${r.mat_cal||"–"}/5)</b></div><div class="rep-item">Comp. observada: <b>${r.comp_obs||"–"}</b></div>`;
+    }
+    const anl=isS?(r.win||""):(r.win||"");
+    const rec=isS?(r.prio||r.rec1||""):(r.rec||"");
+    return `<div class="rep-card">
+      <div class="rep-head">
+        <span class="rep-tipo">${isS?"📊 Semanal "+semoji:"📋 Diario"}</span>
+        <span class="rep-date">${ds}</span>
+      </div>
+      <div class="rep-grid">${items}</div>
+      ${anl?`<div class="rep-anl">✅ Logro: "${anl.substring(0,100)}${anl.length>100?"…":""}"</div>`:""}
+      ${rec?`<div class="rep-anl" style="margin-top:3px">💡 Rec: "${rec.substring(0,100)}${rec.length>100?"…":""}"</div>`:""}
+    </div>`;
   }).join("");
 }
 
-// ══════════ ADMIN ══════════
-function loadAdmin() {
-  const all = JSON.parse(localStorage.getItem("lp_reports") || "[]");
-  const hoy = new Date().toISOString().split("T")[0];
-  const semStart = new Date(); semStart.setDate(semStart.getDate() - semStart.getDay());
-  const reportesHoy = all.filter(r => r.timestamp && r.timestamp.startsWith(hoy));
-  const reportesSem = all.filter(r => r.timestamp && new Date(r.timestamp) >= semStart);
-  const semanales = reportesSem.filter(r => r.tipo === "semanal");
-  document.getElementById("m-hoy").textContent = reportesHoy.length;
-  document.getElementById("m-semana").textContent = reportesSem.length;
-  document.getElementById("m-pedidos").textContent = semanales.reduce((s,r)=>s+(parseInt(r.pedidos)||0),0) || "–";
-  document.getElementById("m-visitas").textContent = semanales.reduce((s,r)=>s+(parseInt(r.visitas)||0),0) || "–";
+// ═══ ADMIN ═══
+function loadAdmin(){
+  const all=JSON.parse(localStorage.getItem("lp_rep")||"[]");
+  const hoy=new Date().toISOString().split("T")[0];
+  const ws=new Date(); ws.setDate(ws.getDate()-ws.getDay());
+  const rHoy=all.filter(r=>r.ts&&r.ts.startsWith(hoy));
+  const rSem=all.filter(r=>r.ts&&new Date(r.ts)>=ws);
+  const rSem_s=rSem.filter(r=>r.tipo==="semanal");
+  el("m-hoy").textContent=rHoy.length;
+  el("m-sem").textContent=rSem.length;
+  el("m-ped").textContent=rSem_s.reduce((s,r)=>s+(parseInt(r.pedidos)||0),0)||"–";
+  el("m-vis").textContent=rSem_s.reduce((s,r)=>s+(parseInt(r.visitas)||0),0)||"–";
 
-  const pc = document.getElementById("admin-practicantes");
-  pc.innerHTML = Object.entries(CONFIG.PRACTICANTES).map(([code, name]) => {
-    const rep = all.filter(r => r.codigo === code);
-    const ult = rep[0];
-    const dias = ult ? Math.floor((Date.now() - new Date(ult.timestamp)) / 86400000) : null;
-    let cls, label;
-    if (!ult) { cls="badge-gray"; label="Sin reportes"; }
-    else if (dias===0) { cls="badge-ok"; label="✓ Hoy"; }
-    else if (dias<=2) { cls="badge-warn"; label="Hace "+dias+"d"; }
-    else { cls="badge-bad"; label="Hace "+dias+"d ⚠️"; }
-    return '<div class="practitioner-row"><div class="prac-code">'+code+'</div><div class="prac-info"><div class="prac-name">'+name+'</div><div class="prac-last">'+rep.length+' reporte(s)</div></div><span class="badge '+cls+'">'+label+'</span></div>';
-  }).join("") || '<div class="empty-state">Sin datos.</div>';
+  el("adm-prac").innerHTML=Object.entries(CFG.PRACTICANTES).map(([code,name])=>{
+    const rep=all.filter(r=>r.codigo===code);
+    const ult=rep[0];
+    const dias=ult?Math.floor((Date.now()-new Date(ult.ts))/86400000):null;
+    let cls,lbl;
+    if(!ult){cls="b-gray";lbl="Sin reportes"}
+    else if(dias===0){cls="b-ok";lbl="✓ Hoy"}
+    else if(dias<=2){cls="b-warn";lbl="Hace "+dias+"d"}
+    else{cls="b-bad";lbl="⚠️ Hace "+dias+"d"}
+    const lastRec=ult&&ult.tipo==="semanal"?(ult.prio||ult.rec1||""):(ult&&ult.rec)||"";
+    return `<div class="prac-row">
+      <div class="prac-code">${code}</div>
+      <div class="prac-info">
+        <div class="prac-name">${name}</div>
+        <div class="prac-last">${rep.length} reporte(s)${lastRec?` · "…${lastRec.substring(0,40)}…"`:""}</div>
+      </div>
+      <span class="badge ${cls}">${lbl}</span>
+    </div>`;
+  }).join("");
 
-  const rc = document.getElementById("admin-reportes");
-  if (!all.length) { rc.innerHTML = '<div class="empty-state">📭 Sin reportes aún. Las practicantes deben enviar desde sus dispositivos.</div>'; return; }
-  rc.innerHTML = all.slice(0,15).map(r => {
-    const d = new Date(r.timestamp);
-    const ds = d.toLocaleDateString("es-PE",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
-    const sem = r.semaforo ? ({verde:"🟢",amarillo:"🟡",rojo:"🔴"}[r.semaforo]||"") : "";
-    return '<div class="detail-report">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center">' +
-        '<span style="font-weight:700;font-size:13px;color:var(--burg)">'+r.codigo+' — '+r.nombre+'</span>' +
-        '<span style="font-size:11px;color:var(--mid)">'+ds+'</span>' +
-      '</div>' +
-      '<div style="font-size:12px;color:var(--mid);margin-top:4px">' +
-        (r.tipo==="semanal"?"📊 Semanal "+sem+" · "+r.pedidos+" pedidos · "+r.visitas+" visitas · CTR "+(r.ctr||"–")+"%":"📋 Diario · "+r.pedidos+" pedidos · Story: "+r.stories) +
-      '</div>' +
-      (r.notas ? '<div style="font-size:11px;color:var(--mid);margin-top:4px;font-style:italic">"'+r.notas+'"</div>' : '') +
-      '</div>';
+  if(!all.length){el("adm-rep").innerHTML='<div class="empty">📭 Sin reportes aún.</div>';return}
+  el("adm-rep").innerHTML=all.slice(0,12).map(r=>{
+    const d=new Date(r.ts);
+    const ds=d.toLocaleDateString("es-PE",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    const semoji=r.semaforo?({verde:"🟢",amarillo:"🟡",rojo:"🔴"}[r.semaforo]||""):"";
+    const isS=r.tipo==="semanal";
+    const anl=isS?(r.win||""):(r.win||"");
+    const rec=isS?(r.prio||r.rec1||""):(r.rec||"");
+    const comp=r.comp_anl||"";
+    return `<div class="rep-card">
+      <div class="rep-head">
+        <span class="rep-tipo">${r.codigo} — ${r.nombre} · ${isS?"📊 Semanal "+semoji:"📋 Diario"}</span>
+        <span class="rep-date">${ds}</span>
+      </div>
+      <div style="font-size:11px;color:var(--mid);margin-top:5px">
+        ${isS?`${r.pedidos||0} pedidos · ${r.visitas||0} visitas · CTR ${r.ctr||"–"}% · CPC S/${r.cpc||"–"}`:`Story: ${r.story_pub} (${r.story_alcance||0} views) · WA ${r.wa_ped||0} pedidos`}
+      </div>
+      ${anl?`<div class="rep-anl">✅ "${anl.substring(0,120)}${anl.length>120?"…":""}"</div>`:""}
+      ${rec?`<div class="rep-anl" style="margin-top:2px">💡 "${rec.substring(0,120)}${rec.length>120?"…":""}"</div>`:""}
+      ${comp?`<div class="rep-anl" style="margin-top:2px">🔍 "${comp.substring(0,100)}${comp.length>100?"…":""}"</div>`:""}
+    </div>`;
   }).join("");
 }
 
-// ══════════ UTILS ══════════
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  window.scrollTo(0, 0);
-}
-function goBack() {
-  showScreen(currentUser && currentUser.isAdmin ? "screen-admin" : "screen-prac");
-}
-function toast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2800);
-}
-
-setTodayDate();
+// ═══ UTILS ═══
+function el(id){return document.getElementById(id)}
+function v(id){const e=el(id);return e?e.value||"":""}
+function showS(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));el(id).classList.add("active");window.scrollTo(0,0)}
+function goBack(){showS(usr&&usr.isAdmin?"screen-admin":"screen-prac")}
+function toast(msg){const t=el("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800)}
+setDates();
 </script>
 </body>
 </html>
